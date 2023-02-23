@@ -35,6 +35,9 @@ import bolt from "../assets/bolt.png";
 import nb from "../assets/nb.png";
 import skype from "../assets/skype.png";
 import spotify from "../assets/spotify.png";
+import qonics from "../assets/qonics.png"
+import comza from "../assets/comza.webp"
+import ea from "../assets/ea.jpg"
 
 export default {
   email,
@@ -71,4 +74,7 @@ export default {
   nb,
   skype,
   spotify,
+  qonics,
+  comza,
+  ea
 };
