@@ -14,7 +14,6 @@ const Testimonials = () => {
     const brandsQuery = '*[_type == "brands"]';
     client.fetch(testimonialsQuery).then((data) => {
       setTestimonials(data);
-      console.log('testimonials', data)
     });
     client.fetch(brandsQuery).then((data) => {
       setBrands(data);
