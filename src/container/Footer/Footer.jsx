@@ -1,35 +1,67 @@
-import React, { useState } from 'react'
+import React, { useState,useRef } from "react";
 
-import { images } from '../../constants'
-import { AppWrap, MotionWrap } from '../../wrapper'
-import { client } from '../../client'
-import './Footer.scss'
+import { images } from "../../constants";
+import { AppWrap, MotionWrap } from "../../wrapper";
+import { client } from "../../client";
+import emailjs from "@emailjs/browser";
+import "./Footer.scss";
 const Footer = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
-
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const form = useRef()
   const { name, email, message } = formData;
-  const handleChangeInput = e => {
+  const handleChangeInput = (e) => {
     const { name, value } = e.target;
-    setFormData({...formData, [name]: value})
-  }
-  const handleSubmit = () => {
-    setLoading(true)
+    setFormData({ ...formData, [name]: value });
+  };
 
-    const contact = {
-      _type: 'contact',
-      name: name,
-      email: email,
-      message: message
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // if (
+    //   formData.name === "" ||
+    //   formData.email === "" ||
+    //   formData.message === ""
+    // ) {
+    //   setShowError(true);
+    // } else {
+      setShowError(false);
+      setLoading(true);
 
-    client.create(contact)
-      .then(() => {
-        setLoading(false)
-        setIsFormSubmitted(true)
-    })
-  }
+      const contact = {
+        _type: "contact",
+        name: name,
+        email: email,
+        message: message,
+      };
+
+      client.create(contact).then(() => {
+        setLoading(false);
+        setIsFormSubmitted(true);
+      });
+      emailjs
+        .sendForm(
+          "service_fo2bj2u",
+          "template_cku0jtb",
+          form.current,
+          "MEjhmVEh5fQbPPhTF"
+        )
+        .then(
+          (result) => {
+            console.log(result.text);
+          },
+          (error) => {
+            console.log(error.text);
+            console.log('message sent')
+          }
+        );
+    // }
+  };
 
   return (
     <>
@@ -50,51 +82,64 @@ const Footer = () => {
         </div>
       </div>
       {!isFormSubmitted ? (
-        <div className='app__footer-form app__flex'>
-          <div className='app__flex'>
-            <input
-              type='text'
-              className='p-text'
-              value={name}
-              name='name'
+        <form className='app__footer-form app__flex' ref={form} onSubmit={handleSubmit}>
+            <div className='app__flex'>
+              <input
+                type='text'
+                className='p-text'
+                // value={name}
+                name='to_name'
               placeholder='your name'
-              onChange={handleChangeInput}
-            />
-          </div>
-          <div className='app__flex'>
-            <input
-              type='text'
-              className='p-text'
-              value={email}
-              name='email'
-              placeholder='your email'
-              onChange={handleChangeInput}
-            />
-          </div>
-          <div>
-            <textarea
-              className='p-text'
-              placeholder='Your Message'
-              value={message}
-              name='message'
-              onChange={handleChangeInput}
-            />
-          </div>
-          <button type='button' className='p-text' onClick={handleSubmit}>
-            {loading ? "Sending..." : "Send Message"}
-          </button>
-        </div>
+              required
+                onChange={handleChangeInput}
+                onKeyUp={() => setShowError(false)}
+              />
+            </div>
+            <div className='app__flex'>
+              <input
+                type='text'
+                className='p-text'
+                // value={email}
+                name='from_name'
+                placeholder='your email'
+                onChange={handleChangeInput}
+              onKeyUp={() => setShowError(false)}
+              required
+              />
+            </div>
+            <div>
+              <textarea
+                className='p-text'
+                placeholder='Your Message'
+                // value={message}
+                name='message'
+                onChange={handleChangeInput}
+              onKeyUp={() => setShowError(false)}
+              required
+              />
+            </div>
+            {showError ? (
+              <span style={{ color: "red", fontSize: 13 }}>
+                Ensure all fieds filled!
+              </span>
+            ) : (
+              <></>
+            )}
+            <button type='submit' className='p-text'>
+              {loading ? "Sending..." : "Send Message"}
+            </button>
+        </form>
       ) : (
-          <div>
-            <h3 className='head-text'>Thank you for getting in touch</h3>
+        <div>
+          <h3 className='head-text'>Thank you for getting in touch</h3>
         </div>
       )}
     </>
   );
-}
+};
 
 export default AppWrap(
-  MotionWrap(Footer, 'app__footer'),
-  'contact',
-  'app__whitebg'
-)
+  MotionWrap(Footer, "app__footer"),
+  "contact",
+  "app__whitebg"
+);
