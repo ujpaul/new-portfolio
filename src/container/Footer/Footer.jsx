@@ -23,13 +23,6 @@ const Footer = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // if (
-    //   formData.name === "" ||
-    //   formData.email === "" ||
-    //   formData.message === ""
-    // ) {
-    //   setShowError(true);
-    // } else {
       setShowError(false);
       setLoading(true);
 
@@ -60,7 +53,6 @@ const Footer = () => {
             console.log('message sent')
           }
         );
-    // }
   };
 
   return (
