@@ -11,6 +11,7 @@ const Footer = () => {
     email: "",
     message: "",
   });
+  const [isEmailValid, setIsEmailValid] = useState(true)
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -26,33 +27,35 @@ const Footer = () => {
       setShowError(false);
       setLoading(true);
 
-      const contact = {
-        _type: "contact",
-        name: name,
-        email: email,
-        message: message,
-      };
+    if (isEmailValid) {
+        const contact = {
+          _type: "contact",
+          name: name,
+          email: email,
+          message: message,
+        };
 
-      client.create(contact).then(() => {
-        setLoading(false);
-        setIsFormSubmitted(true);
-      });
-      emailjs
-        .sendForm(
-          "service_fo2bj2u",
-          "template_cku0jtb",
-          form.current,
-          "MEjhmVEh5fQbPPhTF"
-        )
-        .then(
-          (result) => {
-            console.log(result.text);
-          },
-          (error) => {
-            console.log(error.text);
-            console.log('message sent')
-          }
-        );
+        client.create(contact).then(() => {
+          setLoading(false);
+          setIsFormSubmitted(true);
+        });
+        emailjs
+          .sendForm(
+            "service_fo2bj2u",
+            "template_cku0jtb",
+            form.current,
+            "MEjhmVEh5fQbPPhTF"
+          )
+          .then(
+            (result) => {
+              console.log(result.text);
+            },
+            (error) => {
+              console.log(error.text);
+              console.log("message sent");
+            }
+          );
+      }
   };
 
   return (
@@ -74,52 +77,60 @@ const Footer = () => {
         </div>
       </div>
       {!isFormSubmitted ? (
-        <form className='app__footer-form app__flex' ref={form} onSubmit={handleSubmit}>
-            <div className='app__flex'>
-              <input
-                type='text'
-                className='p-text'
-                // value={name}
-                name='to_name'
+        <form
+          className='app__footer-form app__flex'
+          ref={form}
+          onSubmit={handleSubmit}
+        >
+          <div className='app__flex'>
+            <input
+              type='text'
+              className='p-text'
+              // value={name}
+              name='to_name'
               placeholder='your name'
               required
-                onChange={handleChangeInput}
-                onKeyUp={() => setShowError(false)}
-              />
-            </div>
-            <div className='app__flex'>
-              <input
-                type='text'
-                className='p-text'
-                // value={email}
-                name='from_name'
-                placeholder='your email'
-                onChange={handleChangeInput}
+              onChange={(e) => {
+                setIsEmailValid(e.target.checkValidity());
+                handleChangeInput();
+              }}
+              onKeyUp={() => setShowError(false)}
+            />
+          </div>
+          <div className='app__flex'>
+            <input
+              type='text'
+              className='p-text'
+              // value={email}
+              name='from_name'
+              placeholder='your email'
+              onChange={handleChangeInput}
               onKeyUp={() => setShowError(false)}
               required
-              />
-            </div>
-            <div>
-              <textarea
-                className='p-text'
-                placeholder='Your Message'
-                // value={message}
-                name='message'
-                onChange={handleChangeInput}
+              pattern='[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$'
+            />
+          </div>
+          <div>
+            <textarea
+              className='p-text'
+              placeholder='Your Message'
+              // value={message}
+              name='message'
+              onChange={handleChangeInput}
               onKeyUp={() => setShowError(false)}
               required
-              />
-            </div>
-            {showError ? (
-              <span style={{ color: "red", fontSize: 13 }}>
-                Ensure all fieds filled!
-              </span>
-            ) : (
-              <></>
-            )}
-            <button type='submit' className='p-text'>
-              {loading ? "Sending..." : "Send Message"}
-            </button>
+            />
+          </div>
+          {showError ? (
+            <span style={{ color: "red", fontSize: 13 }}>
+              Ensure all fieds filled!
+            </span>
+          ) : (
+            <></>
+          )}
+          <button type='submit' className='p-text'>
+            {loading ? "Sending..." : "Send Message"}
+          </button>
         </form>
       ) : (
         <div>
